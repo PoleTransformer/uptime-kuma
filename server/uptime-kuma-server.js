@@ -13,6 +13,7 @@ const childProcessAsync = require("promisify-child-process");
 const path = require("path");
 const axios = require("axios");
 const { isSSL, sslKey, sslCert, sslKeyPassphrase } = require("./config");
+const { getUserAgent } = require("./util-server");
 // DO NOT IMPORT HERE IF THE MODULES USED `UptimeKumaServer.getInstance()`, put at the bottom of this file instead.
 
 /**
@@ -79,7 +80,7 @@ class UptimeKumaServer {
      */
     constructor() {
         // Set axios default user-agent to Uptime-Kuma/version
-        axios.defaults.headers.common["User-Agent"] = this.getUserAgent();
+        axios.defaults.headers.common["User-Agent"] = getUserAgent();
 
         // Set default axios timeout to 5 minutes instead of infinity
         axios.defaults.timeout = 300 * 1000;
@@ -522,14 +523,6 @@ class UptimeKumaServer {
                 log.info("services", "Failed to stop nscd");
             }
         }
-    }
-
-    /**
-     * Default User-Agent when making HTTP requests
-     * @returns {string} User-Agent
-     */
-    getUserAgent() {
-        return "Uptime-Kuma/" + require("../package.json").version;
     }
 
     /**

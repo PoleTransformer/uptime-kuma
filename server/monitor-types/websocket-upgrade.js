@@ -1,7 +1,7 @@
 const { MonitorType } = require("./monitor-type");
 const WebSocket = require("ws");
 const { UP } = require("../../src/util");
-const { checkStatusCode } = require("../util-server");
+const { checkStatusCode, getUserAgent } = require("../util-server");
 // Define closing error codes https://www.iana.org/assignments/websocket/websocket.xml#close-code-number
 const WS_ERR_CODE = {
     1002: "Protocol error",
@@ -60,7 +60,12 @@ class WebSocketMonitorType extends MonitorType {
             const timeoutMs = (monitor.timeout ?? 20) * 1000;
             // If user inputs subprotocol(s), convert to array, set Sec-WebSocket-Protocol header, timeout in ms. Subprotocol Identifier column: https://www.iana.org/assignments/websocket/websocket.xml#subprotocol-name
             const subprotocol = monitor.wsSubprotocol ? monitor.wsSubprotocol.replace(/\s/g, "").split(",") : undefined;
-            const ws = new WebSocket(monitor.url, subprotocol, { handshakeTimeout: timeoutMs });
+            const ws = new WebSocket(monitor.url, subprotocol, {
+                handshakeTimeout: timeoutMs,
+                headers: {
+                    "User-Agent": getUserAgent(),
+                }
+            });
 
             ws.addEventListener("open", (event) => {
                 // Immediately close the connection

@@ -31,6 +31,15 @@ const { Kafka, SASLOptions } = require("kafkajs");
 const crypto = require("crypto");
 
 const isWindows = process.platform === /^win/.test(process.platform);
+
+/**
+ * Default User-Agent when making HTTP requests
+ * @returns {string} User-Agent
+ */
+exports.getUserAgent = () => {
+    return "Uptime-Kuma/" + require("../package.json").version;
+};
+
 /**
  * Init or reset JWT secret
  * @returns {Promise<Bean>} JWT secret
